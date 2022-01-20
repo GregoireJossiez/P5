@@ -1,6 +1,8 @@
 const $cart__items = document.getElementById("cart__items")
 const $cart = document.getElementById("cart")
 
+let cart = ""
+let number = +""
 let price = +""
 
 const retrieveApiData = async () => fetch(`http://localhost:3000/api/products/${itemData.id}`)
@@ -11,8 +13,6 @@ const retrieveApiData = async () => fetch(`http://localhost:3000/api/products/${
 const createCartItemImg = cartItem => {
   const $cart__item__img = document.createElement("div")
   $cart__item__img.classList.add("cart__item__img")
-
-  console.log(itemApiData);
 
   const $img = document.createElement("img")
   $img.setAttribute("src", itemApiData.imageUrl)
@@ -117,21 +117,232 @@ const createCartItemArticle = cartItem => {
   return $cartItemArticle
 }
 
-const cartPrice = (cart) => {
+const cartPrice = () => {
   const totalQuantity = document
   .getElementById("totalQuantity")
-  .textContent = cart.item.length
+
+  if (cart.item.length === 0) {
+    totalQuantity.textContent = 0
+  } else {
+    for (let numberOfArticles = 0; numberOfArticles <= cart.item.length -1; numberOfArticles++) {
+      let numberInCart = +cart.item[`${numberOfArticles}`].quantity
+      number = number + numberInCart
+      totalQuantity.textContent = number
+    }
+  }
 
   const totalPrice = document
   .getElementById("totalPrice")
   .textContent = price
 }
 
-const main = async () => {
-  const cart = JSON.parse(localStorage.getItem("cartItems"))
+const quantityInputsChange = async (e) => {
+  let targetItem = e.target.closest("article")
+  let targetId = targetItem.dataset.id
+  let targetColor = targetItem.dataset.color
 
-  console.log("#################################");
-  console.log(cart);
+  let itemIndex = cart.item.findIndex(item => item.id === targetId && item.color === targetColor)
+
+  if (cart.item[`${itemIndex}`].quantity < e.target.value) {
+    price = price + itemApiData.price
+  } else {
+    price = price - itemApiData.price
+  }
+
+  cart.item[`${itemIndex}`].quantity = e.target.value
+
+  localStorage.setItem("cartItems", JSON.stringify(cart))
+
+  number = 0
+
+  itemData.id = targetId
+
+  itemApiData = await retrieveApiData()
+
+  cartPrice()
+}
+
+const deleteItem = async (e) => {
+  console.log("DELETE : ");
+  let targetItem = e.target.closest("article")
+  console.log(targetItem);
+  let targetId = targetItem.dataset.id
+  let targetColor = targetItem.dataset.color
+  console.log(targetId);
+
+  let itemIndex = cart.item.findIndex(item => item.id === targetId && item.color === targetColor)
+
+  console.log(itemIndex);
+
+  let targetQuantity = document.querySelector(`article[data-id='${targetId}'][data-color='${targetColor}'] input.itemQuantity`)
+  let targetPrice = document.querySelector(`article[data-id='${targetId}'] div.cart__item__content__description > p:last-child`)
+
+  console.log("TARGET QUANTITY : ", targetQuantity.value);
+  console.log("TARGET PRICE : ", targetPrice.textContent);
+
+  targetPriceValue = targetPrice.textContent.replace(" €", "")
+
+  number = number - targetQuantity.value
+  targetQuantPrice = targetPriceValue * targetQuantity.value
+  price = price - targetQuantPrice
+
+  console.log(targetQuantPrice);
+
+  $cart__items.removeChild(targetItem)
+  cart.item.splice(itemIndex, 1,)
+
+  localStorage.setItem("cartItems", JSON.stringify(cart))
+
+  number = 0
+
+  cartPrice()
+}
+
+function contactFormVerification(e) {
+  if (e.target.id === "firstName") {
+    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
+    if (e.target.value === "") {
+      let error = document.getElementById("firstNameErrorMsg")
+      error.textContent = ""
+    } else if (e.target.value.match(firstNameRegEx) === null) {
+      let error = document.getElementById("firstNameErrorMsg")
+      error.textContent = "firstName incorrect"
+    } else {
+      let error = document.getElementById("firstNameErrorMsg")
+      error.textContent = ""
+    }
+  } else if (e.target.id === "lastName") {
+    const lastNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
+    if (e.target.value === "") {
+      let error = document.getElementById("lastNameErrorMsg")
+      error.textContent = ""
+    } else if (e.target.value.match(lastNameRegEx) === null) {
+      let error = document.getElementById("lastNameErrorMsg")
+      error.textContent = "lastName incorrect"
+    } else {
+      let error = document.getElementById("lastNameErrorMsg")
+      error.textContent = ""
+    }
+  } else if (e.target.id === "address") {
+    const addressRegEx = /[0-9,'a-zA-Zéèàêëï]/g
+    if (e.target.value === "") {
+      let error = document.getElementById("addressErrorMsg")
+      error.textContent = ""
+    } else if (e.target.value.match(addressRegEx) === null) {
+      let error = document.getElementById("addressErrorMsg")
+      error.textContent = "address incorrect"
+    } else {
+      let error = document.getElementById("addressErrorMsg")
+      error.textContent = ""
+    }
+  } else if (e.target.id === "city") {
+    const cityRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
+    if (e.target.value === "") {
+      let error = document.getElementById("cityErrorMsg")
+      error.textContent = ""
+    } else if (e.target.value.match(cityRegEx) === null) {
+      let error = document.getElementById("cityErrorMsg")
+      error.textContent = "city incorrect"
+    } else {
+      let error = document.getElementById("cityErrorMsg")
+      error.textContent = ""
+    }
+  } else {
+    const emailRegEx = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
+    if (e.target.value === "") {
+      let error = document.getElementById("emailErrorMsg")
+      error.textContent = ""
+    } else if (e.target.value.match(emailRegEx) === null) {
+      let error = document.getElementById("emailErrorMsg")
+      error.textContent = "Email incorrect"
+    } else {
+      let error = document.getElementById("emailErrorMsg")
+      error.textContent = ""
+    }
+  }
+}
+
+function postOrder(order) {
+  console.log(order);
+  const postOrder = fetch('http://localhost:3000/api/products/order', {
+  method: 'POST',
+  body: JSON.stringify(order),
+  headers: {
+    'Content-Type': 'application/json;charset=utf-8'
+  },
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function (server) {
+    localStorage.clear()
+    orderId = server.orderId;
+    if (server.orderId != "") {
+        location.href = "confirmation.html?id=" + server.orderId;
+      }
+    console.log(orderId);
+  })
+  .catch((err) => {
+    console.log("Problème avec fetch : " + err.message);
+  })
+
+  // if (orderId != "") {
+  //     location.href = "confirmation.html?id=" + orderId;
+  //   }
+}
+
+function createOrder(event) {
+  event.preventDefault()
+  console.log("order");
+
+  let products = []
+
+  for (let productsN = 0; productsN < cart.item.length -1; productsN++) {
+    products.push(cart.item[`${productsN}`])
+  }
+
+  const order = {
+    contact : {
+      firstName : document.getElementById("firstName").value,
+      lastName : document.getElementById("lastName").value,
+      address : document.getElementById("address").value,
+      city : document.getElementById("city").value,
+      email : document.getElementById("email").value
+    },
+    products : products
+  }
+
+  console.log(order);
+
+  postOrder(order)
+}
+
+const firstName = document
+  .getElementById("firstName")
+  .addEventListener("focusout", contactFormVerification)
+
+const lastName = document
+  .getElementById("lastName")
+  .addEventListener("focusout", contactFormVerification)
+
+const address = document
+  .getElementById("address")
+  .addEventListener("focusout", contactFormVerification)
+
+const city = document
+  .getElementById("city")
+  .addEventListener("focusout", contactFormVerification)
+
+const email = document
+  .getElementById("email")
+  .addEventListener("focusout", contactFormVerification)
+
+const orderBtn = document
+  .getElementById("order")
+  .addEventListener("click", createOrder)
+
+const main = async () => {
+  cart = JSON.parse(localStorage.getItem("cartItems"))
 
   if (cart !== null) {
     const numberOfCartItems = cart.item.length - 1
@@ -145,14 +356,24 @@ const main = async () => {
 
       price = price + quantPrice
 
-      console.log(price);
-
       $cart__items.appendChild(createCartItemArticle(itemData))
 
     }
   }
 
   cartPrice(cart)
+
+  deleteItemElements = document.getElementsByClassName("deleteItem")
+  for (let p = 0; p <= deleteItemElements.length - 1; p++) {
+    deleteItemElements[`${p}`].addEventListener("click", deleteItem)
+  }
+
+  quantityInputsElements = document.querySelectorAll("div.cart__item__content__settings__quantity > input")
+  for (let q = 0; q <= quantityInputsElements.length -1; q++) {
+    quantityInputsElements[`${q}`].addEventListener("change", quantityInputsChange)
+  }
+
+
 
 }
 

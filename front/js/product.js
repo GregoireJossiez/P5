@@ -1,10 +1,9 @@
 const $kanapItemImg = document.getElementsByClassName("item__img")
 const $kanapItemColors = document.getElementById("colors")
 
-
-  const params = window.location.href
-  var url = new URL(params)
-  var id = url.searchParams.get("id")
+const params = window.location.href
+var url = new URL(params)
+var id = url.searchParams.get("id")
 
 const retrieveKanapData = async () => fetch(`http://localhost:3000/api/products/${id}`)
   .then(res => res.json())

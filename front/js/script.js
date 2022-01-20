@@ -40,23 +40,10 @@ const createKanapItem = kanap => {
   return $kanapItem
 }
 
-const calculateOffset = () => {
-  const params = new URLSearchParams(window.location.search)
-  const pageParams = params.get('page')
-
-  if (!pageParams || Number(pageParams) === 1) {
-      return 0
-  }
-
-  return (Number(pageParams) - 1) * ITEMS_PER_PAGE
-}
-
   const main = async () => {
     const kanapsData = await retrieveKanapsData()
 
-    const offset = calculateOffset()
-
-    for (let i = offset; i < ITEMS_PER_PAGE + offset; i++) {
+    for (let i = 0; i < ITEMS_PER_PAGE; i++) {
         if (kanapsData[i]) {
             $items.appendChild(createKanapItem(kanapsData[i]))
         }
