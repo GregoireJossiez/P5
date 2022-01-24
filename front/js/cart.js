@@ -1,14 +1,22 @@
+// Défini des elements du DOM
+
 const $cart__items = document.getElementById("cart__items")
 const $cart = document.getElementById("cart")
+
+// Défini des variables vides pour contourner leurs limites d'appel
 
 let cart = ""
 let number = +""
 let price = +""
 
+// Requête API avec ID
+
 const retrieveApiData = async () => fetch(`http://localhost:3000/api/products/${itemData.id}`)
   .then(res => res.json())
   .then(data => data)
   .catch(err => console.log("Oh no", err))
+
+// Créer les élements HTML pour les images
 
 const createCartItemImg = cartItem => {
   const $cart__item__img = document.createElement("div")
@@ -22,6 +30,8 @@ const createCartItemImg = cartItem => {
 
   return $cart__item__img
 }
+
+// Créer les élements HTML pour la description
 
 function createCartItemContentDescription() {
   const $cart__item__content__description = document.createElement("div")
@@ -41,6 +51,8 @@ function createCartItemContentDescription() {
 
   return $cart__item__content__description
 }
+
+// Créer élements HTML pour les paramètres de quantité
 
 const createCartItemContentSettingsQuantity = cartItem => {
   const $cart__item__content__settings__quantity = document.createElement("div")
@@ -63,6 +75,8 @@ const createCartItemContentSettingsQuantity = cartItem => {
   return $cart__item__content__settings__quantity
 }
 
+// Créer élements HTML pour le bouton supprimer
+
 const createCartItemContentSettingsDelete = cartItem => {
   const $cart__item__content__settings__delete = document.createElement("div")
   $cart__item__content__settings__delete.classList.add("cart__item__content__settings__delete")
@@ -75,6 +89,10 @@ const createCartItemContentSettingsDelete = cartItem => {
 
   return $cart__item__content__settings__delete
 }
+
+// Créer élement HTML pour les paramètres
+// Appelle les fontions qui créer son contenu
+// Créer les enfants du DOM
 
 const createCartItemContentSettings = cartItem => {
   const $cart__item__content__settings = document.createElement("div")
@@ -89,6 +107,10 @@ const createCartItemContentSettings = cartItem => {
   return $cart__item__content__settings
 }
 
+// Créer éléments HTML pour le CONTENT
+// Appelle les fontions qui créer son contenu
+// Assigne les enfants
+
 const createCartItemContent = cartItem => {
   const $cart__item__content= document.createElement("div")
   $cart__item__content.classList.add("cart__item__content")
@@ -101,6 +123,10 @@ const createCartItemContent = cartItem => {
 
   return $cart__item__content
 }
+
+// Créer éléments HTML pour l'ARTICLE
+// Appelle les fontions qui créer son contenu
+// Assigne les enfants
 
 const createCartItemArticle = cartItem => {
   const $cartItemArticle = document.createElement("article")
@@ -116,6 +142,11 @@ const createCartItemArticle = cartItem => {
 
   return $cartItemArticle
 }
+
+// Affiche la quantité d'article
+// Si = 0, défini à 0
+// Sinon, pour chaque item : récupère la quantité, l'additionne et l'Affiche
+// Affiche le prix TOTAL contenu dans la variable PRICE
 
 const cartPrice = () => {
   const totalQuantity = document
@@ -135,6 +166,12 @@ const cartPrice = () => {
   .getElementById("totalPrice")
   .textContent = price
 }
+
+// Récupère l'ID et color de l'item concerné
+// Défini l'index de l'item pour le localiser
+// Modifie la quantité si + ou -
+// Met à jour le localStorage
+// Met à jour la quantité et prix total affiché en appelant cartPrice
 
 const quantityInputsChange = async (e) => {
   let targetItem = e.target.closest("article")
@@ -161,6 +198,14 @@ const quantityInputsChange = async (e) => {
 
   cartPrice()
 }
+
+// Récupère l'ID et color de l'item concerné
+// Défini l'index de l'item pour le localiser
+// Récupère la quantité et le prix
+// Met à jour les données pour la suppression
+// Supprime l'item du DOM et du tableau
+// Met a jour localStorage
+// Met à jour la quantité et prix total affiché en appelant cartPrice
 
 const deleteItem = async (e) => {
   console.log("DELETE : ");
@@ -198,8 +243,10 @@ const deleteItem = async (e) => {
   cartPrice()
 }
 
+// Définie toutes les RegEx suivant la donnée à vérifier
+
 function contactFormVerification(e) {
-  if (e.target.id === "firstName") {
+  if ((e.target.id === "firstName") || (e.target.id === "lastName") || (e.target.id === "city")) {
     const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
     if (e.target.value === "") {
       let error = document.getElementById("firstNameErrorMsg")
@@ -209,18 +256,6 @@ function contactFormVerification(e) {
       error.textContent = "firstName incorrect"
     } else {
       let error = document.getElementById("firstNameErrorMsg")
-      error.textContent = ""
-    }
-  } else if (e.target.id === "lastName") {
-    const lastNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
-    if (e.target.value === "") {
-      let error = document.getElementById("lastNameErrorMsg")
-      error.textContent = ""
-    } else if (e.target.value.match(lastNameRegEx) === null) {
-      let error = document.getElementById("lastNameErrorMsg")
-      error.textContent = "lastName incorrect"
-    } else {
-      let error = document.getElementById("lastNameErrorMsg")
       error.textContent = ""
     }
   } else if (e.target.id === "address") {
@@ -233,18 +268,6 @@ function contactFormVerification(e) {
       error.textContent = "address incorrect"
     } else {
       let error = document.getElementById("addressErrorMsg")
-      error.textContent = ""
-    }
-  } else if (e.target.id === "city") {
-    const cityRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
-    if (e.target.value === "") {
-      let error = document.getElementById("cityErrorMsg")
-      error.textContent = ""
-    } else if (e.target.value.match(cityRegEx) === null) {
-      let error = document.getElementById("cityErrorMsg")
-      error.textContent = "city incorrect"
-    } else {
-      let error = document.getElementById("cityErrorMsg")
       error.textContent = ""
     }
   } else {
@@ -262,6 +285,9 @@ function contactFormVerification(e) {
   }
 }
 
+// Requête API POST
+// Si valide, redirige vers une URL comportant l'orderID
+
 function postOrder(order) {
   console.log(order);
   const postOrder = fetch('http://localhost:3000/api/products/order', {
@@ -278,6 +304,7 @@ function postOrder(order) {
     localStorage.clear()
     orderId = server.orderId;
     if (server.orderId != "") {
+      console.log(orderId);
         location.href = "confirmation.html?id=" + server.orderId;
       }
     console.log(orderId);
@@ -285,11 +312,9 @@ function postOrder(order) {
   .catch((err) => {
     console.log("Problème avec fetch : " + err.message);
   })
-
-  // if (orderId != "") {
-  //     location.href = "confirmation.html?id=" + orderId;
-  //   }
 }
+
+// Créer l'ordre de commande avc le contenu de la requête POST
 
 function createOrder(event) {
   event.preventDefault()
@@ -298,7 +323,7 @@ function createOrder(event) {
   let products = []
 
   for (let productsN = 0; productsN < cart.item.length -1; productsN++) {
-    products.push(cart.item[`${productsN}`])
+    products.push(cart.item[`${productsN}`].id)
   }
 
   const order = {
@@ -312,10 +337,13 @@ function createOrder(event) {
     products : products
   }
 
-  console.log(order);
+  console.log("products ", products);
+  console.log("REQUETE JSON : ", order);
 
   postOrder(order)
 }
+
+// Écoute les champs du formualire pour vérification RegEx
 
 const firstName = document
   .getElementById("firstName")
@@ -337,9 +365,15 @@ const email = document
   .getElementById("email")
   .addEventListener("focusout", contactFormVerification)
 
+// Écoute le click du bouton de commande pour appeler createOrder
+
 const orderBtn = document
   .getElementById("order")
   .addEventListener("click", createOrder)
+
+// Parse les données du localStorage
+// Si localStorage contient des données, récupère le nombre d'entrées
+// FOR => Pour chaque entrée, récupère les data API, calcul le prix, créer enfant du DOM
 
 const main = async () => {
   cart = JSON.parse(localStorage.getItem("cartItems"))
@@ -361,20 +395,23 @@ const main = async () => {
     }
   }
 
+  // Appelle cartPrice avec les data API
+
   cartPrice(cart)
+
+  // Créer pour chaque entrée un eventListener du boutton supprimer
 
   deleteItemElements = document.getElementsByClassName("deleteItem")
   for (let p = 0; p <= deleteItemElements.length - 1; p++) {
     deleteItemElements[`${p}`].addEventListener("click", deleteItem)
   }
 
+  // Créer pour chaque entrée un eventListener de la quantité
+
   quantityInputsElements = document.querySelectorAll("div.cart__item__content__settings__quantity > input")
   for (let q = 0; q <= quantityInputsElements.length -1; q++) {
     quantityInputsElements[`${q}`].addEventListener("change", quantityInputsChange)
   }
-
-
-
 }
 
 main()

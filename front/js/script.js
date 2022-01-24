@@ -1,11 +1,17 @@
+// Défini $items pour assigner comme enfants tous les objets HTML
+
 const $items = document.getElementById("items")
 
 const ITEMS_PER_PAGE = 8
+
+// Requête FETCH API
 
 const retrieveKanapsData = async () => fetch("http://localhost:3000/api/products")
   .then(res => res.json())
     .then(data => data)
     .catch(err => console.log("Oh no", err))
+
+// Créer les autres élements HTML et leurs contenus
 
 const createKanapArticle = kanap => {
   const $kanapArticle = document.createElement("article")
@@ -29,6 +35,10 @@ const createKanapArticle = kanap => {
   return $kanapArticle
 }
 
+// Fonction appelé par MAIN() avec kanap contenant les DATA api
+// Créer l'element A HTML avec l'ID de chaque ITEM comme URL, appelle la prochaine function
+// Et la définie comme enfant
+
 const createKanapItem = kanap => {
   const $kanapItem = document.createElement("a")
   $kanapItem.setAttribute("href", `./product.html?id=${kanap._id}`)
@@ -39,6 +49,11 @@ const createKanapItem = kanap => {
 
   return $kanapItem
 }
+
+// récupère les data de l'API dans kanapsData
+// Boucle FOR pour chaque ITEM =>
+// Appelle createKanapItem pour créer les objets HTML en passant le contenu de l'API
+// Défini comme enfant de $items
 
   const main = async () => {
     const kanapsData = await retrieveKanapsData()
