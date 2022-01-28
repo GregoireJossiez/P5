@@ -33,9 +33,8 @@ const createKanapImg = kanap => {
 // Créer un enfant du DOM
 
 const createKanapColors = kanap => {
-  const numberOfColors = kanap.colors.length - 1
 
-  for (let i = 0; i <= numberOfColors; i++) {
+  for (let i = 0; i <= kanap.colors.length -1; i++) {
     const $kanapColors = document.createElement("option")
     $kanapColors.setAttribute("value", kanap.colors[`${i}`])
     $kanapColors.textContent = kanap.colors[`${i}`]
@@ -97,7 +96,7 @@ function addToCartData(event) {
 
   if (selectedQuantity === "0") {
     console.log("Quantity must be above 0, item not created");
-  } else if ((cartItems.item.find(item => item.id === id)) && (cartItems.item.find(item => item.color === selectedColor))) {
+  } else if ((cartItems.item.find(item => item.id === id && item.color === selectedColor))) {
     console.log("ketchup");
     let itemIndex = cartItems.item.findIndex(item => item.id === id && item.color === selectedColor)
 

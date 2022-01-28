@@ -8,6 +8,12 @@ const $cart = document.getElementById("cart")
 let cart = ""
 let number = +""
 let price = +""
+let firstNameVerification = false
+let lastNameVerification = false
+let addressVerification = false
+let cityVerification = false
+let emailVerification = false
+let formVerification = false
 
 // Requête API avec ID
 
@@ -246,42 +252,86 @@ const deleteItem = async (e) => {
 // Définie toutes les RegEx suivant la donnée à vérifier
 
 function contactFormVerification(e) {
-  if ((e.target.id === "firstName") || (e.target.id === "lastName") || (e.target.id === "city")) {
+  if (e.target.id === "firstName") {
     const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
     if (e.target.value === "") {
-      let error = document.getElementById("firstNameErrorMsg")
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
       error.textContent = ""
+      firstNameVerification = false
     } else if (e.target.value.match(firstNameRegEx) === null) {
-      let error = document.getElementById("firstNameErrorMsg")
-      error.textContent = "firstName incorrect"
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
+      error.textContent = "Champ incorrect"
+      firstNameVerification = false
     } else {
-      let error = document.getElementById("firstNameErrorMsg")
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
       error.textContent = ""
+      firstNameVerification = true
+    }
+  } else if (e.target.id === "lastName") {
+    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
+    if (e.target.value === "") {
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
+      error.textContent = ""
+      lastNameVerification = false
+    } else if (e.target.value.match(firstNameRegEx) === null) {
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
+      error.textContent = "Champ incorrect"
+      lastNameVerification = false
+    } else {
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
+      error.textContent = ""
+      lastNameVerification = true
     }
   } else if (e.target.id === "address") {
     const addressRegEx = /[0-9,'a-zA-Zéèàêëï]/g
     if (e.target.value === "") {
       let error = document.getElementById("addressErrorMsg")
       error.textContent = ""
+      addressVerification = false
     } else if (e.target.value.match(addressRegEx) === null) {
       let error = document.getElementById("addressErrorMsg")
       error.textContent = "address incorrect"
+      addressVerification = false
     } else {
       let error = document.getElementById("addressErrorMsg")
       error.textContent = ""
+      addressVerification = true
+    }
+  } else if (e.target.id === "city") {
+    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
+    if (e.target.value === "") {
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
+      error.textContent = ""
+      cityVerification = false
+    } else if (e.target.value.match(firstNameRegEx) === null) {
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
+      error.textContent = "Champ incorrect"
+      cityVerification = false
+    } else {
+      let error = document.getElementById(`${e.target.id}ErrorMsg`)
+      error.textContent = ""
+      cityVerification = true
     }
   } else {
     const emailRegEx = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
     if (e.target.value === "") {
       let error = document.getElementById("emailErrorMsg")
       error.textContent = ""
+      emailVerification = false
     } else if (e.target.value.match(emailRegEx) === null) {
       let error = document.getElementById("emailErrorMsg")
       error.textContent = "Email incorrect"
+      emailVerification = false
     } else {
       let error = document.getElementById("emailErrorMsg")
       error.textContent = ""
+      emailVerification = true
     }
+  }
+
+  if ((firstNameVerification === true) && (lastNameVerification === true) && (addressVerification === true) && (cityVerification === true) && (emailVerification === true)) {
+    formVerification = true
+    console.log(formVerification);
   }
 }
 
@@ -314,33 +364,38 @@ function postOrder(order) {
   })
 }
 
-// Créer l'ordre de commande avc le contenu de la requête POST
+// Créer l'ordre de commande avec le contenu de la requête POST
 
 function createOrder(event) {
   event.preventDefault()
   console.log("order");
+  console.log(formVerification);
 
-  let products = []
+  if (formVerification === true) {
+    let products = []
 
-  for (let productsN = 0; productsN < cart.item.length -1; productsN++) {
-    products.push(cart.item[`${productsN}`].id)
+    for (let productsN = 0; productsN < cart.item.length -1; productsN++) {
+      products.push(cart.item[`${productsN}`].id)
+    }
+
+    const order = {
+      contact : {
+        firstName : document.getElementById("firstName").value,
+        lastName : document.getElementById("lastName").value,
+        address : document.getElementById("address").value,
+        city : document.getElementById("city").value,
+        email : document.getElementById("email").value
+      },
+      products : products
+    }
+
+    console.log("products ", products);
+    console.log("REQUETE JSON : ", order);
+
+    postOrder(order)
+  } else {
+    console.log("Form is not valid");
   }
-
-  const order = {
-    contact : {
-      firstName : document.getElementById("firstName").value,
-      lastName : document.getElementById("lastName").value,
-      address : document.getElementById("address").value,
-      city : document.getElementById("city").value,
-      email : document.getElementById("email").value
-    },
-    products : products
-  }
-
-  console.log("products ", products);
-  console.log("REQUETE JSON : ", order);
-
-  postOrder(order)
 }
 
 // Écoute les champs du formualire pour vérification RegEx
